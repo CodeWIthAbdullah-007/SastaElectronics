@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - SastaElectronics</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+  <div id="pageHeader"></div>
+  <main style="padding-top:var(--header-height)">
+    <div class="page-header">
+      <h1>Shopping Cart</h1>
+      <p>Review your items before checkout</p>
+    </div>
+    <div class="container" style="padding-bottom:64px">
+      <div id="cartContent"></div>
+    </div>
+  </main>
+  <div id="pageFooter"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    initPage('shop');
+    function renderCart() {
+      const items = Cart.get();
+      const content = document.getElementById('cartContent');
+      if (items.length === 0) {
+        content.innerHTML = `<div class="empty-state">
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+          <h3>Your cart is empty</h3><p>Add products to your cart and they will appear here.</p>
+          <a href="shop.html" class="btn btn-primary">Continue Shopping</a></div>`;
+        return;
+      }
+      const subtotal = Cart.total();
+      const shipping = subtotal >= 5000 ? 0 : 250;
+      const total = subtotal + shipping;
+      let itemsHtml = items.map(item => {
+        const p = getProductById(item.id); if (!p) return '';
+        return `
+          <div class="cart-item">
+            <div class="cart-item-image"><img src="${p.image}" alt="${p.name}"></div>
+            <div class="cart-item-info">
+              <div class="cart-item-title"><a href="product.html?id=${p.id}">${p.name}</a></div>
+              <div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:6px">${p.brand}</div>
+              <div class="cart-item-price">${formatPrice(p.price)}</div>
+            </div>
+            <div class="cart-item-actions">
+              <div class="quantity-control">
+                <button onclick="updateCartQty('${p.id}', ${item.qty - 1})">−</button>
+                <input type="number" value="${item.qty}" readonly>
+                <button onclick="updateCartQty('${p.id}', ${item.qty + 1})">+</button>
+              </div>
+              <span style="font-weight:800;color:var(--primary-dark);min-width:110px;text-align:right">${formatPrice(p.price * item.qty)}</span>
+              <button class="btn btn-icon btn-secondary" onclick="removeFromCart('${p.id}')" title="Remove" style="color:var(--danger)">${ICONS.trash}</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      content.innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 380px;gap:24px" class="checkout-grid">
+          <div>${itemsHtml}</div>
+          <div class="cart-summary">
+            <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:20px">Order Summary</h3>
+            <div class="cart-summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+            <div class="cart-summary-row"><span>Shipping</span><span>${shipping === 0 ? '<span style="color:var(--accent);font-weight:600">Free</span>' : formatPrice(shipping)}</span></div>
+            ${shipping > 0 ? '<div style="font-size:0.8rem;color:var(--text-muted);padding:4px 0">Free shipping on orders above Rs. 5,000</div>' : ''}
+            <div class="cart-summary-row total"><span>Total</span><span style="color:var(--primary-dark)">${formatPrice(total)}</span></div>
+            <a href="checkout.html" class="btn btn-primary btn-lg w-full" style="margin-top:20px">Proceed to Checkout</a>
+            <a href="shop.html" class="btn btn-secondary w-full" style="margin-top:10px;text-align:center">Continue Shopping</a>
+          </div>
+        </div>`;
+    }
+    function updateCartQty(id, qty) { if (qty < 1) Cart.remove(id); else Cart.updateQty(id, qty); renderCart(); }
+    function removeFromCart(id) { Cart.remove(id); showToast('Item removed from cart', 'info'); renderCart(); }
+    renderCart();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SastaElectronics</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+    <div id="pageHeader"></div>
+    <main style="padding-top:var(--header-height)">
+        <div class="page-header">
+            <h1>My Profile</h1>
+            <p>Manage your personal information</p>
+        </div>
+        <div class="container section" style="padding-top:0">
+            <div class="dashboard-grid">
+                <aside class="dashboard-sidebar">
+                    <nav class="dashboard-sidebar-nav">
+                        <a href="dashboard.html">${ICONS.grid} Dashboard</a>
+                        <a href="profile.html" class="active">${ICONS.user} My Profile</a>
+                        <a href="orders.html">${ICONS.package} My Orders</a>
+                        <a href="wishlist.html">${ICONS.heart} Wishlist</a>
+                        <a href="cart.html">${ICONS.cart} Cart</a>
+                    </nav>
+                </aside>
+                <div class="glass-card" id="profileContent"></div>
+            </div>
+        </div>
+    </main>
+    <div id="pageFooter"></div>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        initPage('home');
+        const user = JSON.parse(localStorage.getItem('sasta_current_user') || 'null');
+        if (!user) { window.location.href = 'login.html'; }
+        document.getElementById('profileContent').innerHTML = `
+      <h3 style="margin-bottom:24px;font-weight:700">Personal Information</h3>
+      <form onsubmit="updateProfile(event)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" id="pFirstName" value="${user.firstName}" required></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" id="pLastName" value="${user.lastName}" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="pEmail" value="${user.email}" required></div>
+        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="pPhone" value="${user.phone}" required></div>
+        <h3 style="margin:24px 0 16px;font-weight:700">Change Password</h3>
+        <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="pCurrentPass" placeholder="Enter current password"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="pNewPass" placeholder="New password"></div>
+          <div class="form-group"><label class="form-label">Confirm</label><input type="password" class="form-input" id="pConfirmPass" placeholder="Confirm"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:16px">Save Changes</button>
+      </form>
+      <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border-glass)">
+        <p style="color:var(--text-muted);font-size:0.85rem">Account created: ${new Date(user.joined).toLocaleDateString()}</p>
+      </div>`;
+        function updateProfile(e) {
+            e.preventDefault();
+            user.firstName = document.getElementById('pFirstName').value.trim();
+            user.lastName = document.getElementById('pLastName').value.trim();
+            user.email = document.getElementById('pEmail').value.trim();
+            user.phone = document.getElementById('pPhone').value.trim();
+            const np = document.getElementById('pNewPass').value;
+            const cp = document.getElementById('pConfirmPass').value;
+            if (np) { if (np.length < 6) { showToast('Min 6 characters', 'error'); return; } if (np !== cp) { showToast('Passwords do not match', 'error'); return; } user.password = np; }
+            localStorage.setItem('sasta_current_user', JSON.stringify(user));
+            const users = JSON.parse(localStorage.getItem('sasta_users') || '[]');
+            const idx = users.findIndex(u => u.id === user.id);
+            if (idx >= 0) { users[idx] = user; localStorage.setItem('sasta_users', JSON.stringify(users)); }
+            showToast('Profile updated!', 'success');
+        }
+    </script>
+</body>
+
+</html>

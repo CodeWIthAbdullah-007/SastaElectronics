@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="50%" style="stop-color:#06B6D4"/>
+      <stop offset="100%" style="stop-color:#10B981"/>
+    </linearGradient>
+  </defs>
+  <path d="M10 35 L20 10 L30 30 L40 15 L50 35" stroke="url(#logoGrad)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="30" cy="10" r="4" fill="#3B82F6"/>
+  <circle cx="50" cy="35" r="3" fill="#10B981"/>
+  <text x="60" y="32" font-family="Arial, sans-serif" font-weight="700" font-size="18" fill="#ffffff">Sasta</text>
+  <text x="112" y="32" font-family="Arial, sans-serif" font-weight="700" font-size="18" fill="url(#logoGrad)">Electronics</text>
+</svg>

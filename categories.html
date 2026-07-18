@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories - SastaElectronics</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+  <div id="pageHeader"></div>
+  <main style="padding-top:var(--header-height)">
+    <div class="page-header">
+      <h1>All Categories</h1>
+      <p>Browse our wide range of electronics</p>
+    </div>
+    <div class="container section" style="padding-top:0">
+      <div class="grid grid-4" id="categoriesList"></div>
+    </div>
+  </main>
+  <div id="pageFooter"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    initPage('categories');
+    document.getElementById('categoriesList').innerHTML = getCategories().map(cat => `
+      <a href="shop.html?category=${cat.id}" class="category-card" style="text-decoration:none">
+        <div class="category-card-icon">${getCategoryIcon(cat.icon)}</div>
+        <h3>${cat.name}</h3>
+        <p>${cat.count} Products</p>
+      </a>
+    `).join('');
+  </script>
+</body>
+
+</html>

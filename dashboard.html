@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SastaElectronics</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+    <div id="pageHeader"></div>
+    <main style="padding-top:var(--header-height)">
+        <div class="page-header">
+            <h1>My Dashboard</h1>
+            <p>Manage your account and orders</p>
+        </div>
+        <div class="container section" style="padding-top:0">
+            <div class="dashboard-grid">
+                <aside class="dashboard-sidebar">
+                    <nav class="dashboard-sidebar-nav">
+                        <a href="dashboard.html" class="active">${ICONS.grid} Dashboard</a>
+                        <a href="profile.html">${ICONS.user} My Profile</a>
+                        <a href="orders.html">${ICONS.package} My Orders</a>
+                        <a href="wishlist.html">${ICONS.heart} Wishlist</a>
+                        <a href="cart.html">${ICONS.cart} Cart</a>
+                    </nav>
+                    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border-glass)">
+                        <button class="btn btn-danger w-full" onclick="handleLogout()">Sign Out</button>
+                    </div>
+                </aside>
+                <div>
+                    <div class="stat-cards" id="dashStats"></div>
+                    <div class="glass-card">
+                        <h3 style="margin-bottom:20px;font-weight:700">Recent Orders</h3>
+                        <div id="recentOrders"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="pageFooter"></div>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        initPage('home');
+        const user = JSON.parse(localStorage.getItem('sasta_current_user') || 'null');
+        if (!user) { window.location.href = 'login.html'; }
+        const orders = JSON.parse(localStorage.getItem('sasta_orders') || '[]');
+        document.getElementById('dashStats').innerHTML = `
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--primary-dark)">${orders.length}</div><div class="stat-card-label">Total Orders</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--accent)">${formatPrice(orders.reduce((s, o) => s + o.total, 0))}</div><div class="stat-card-label">Total Spent</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--warning)">${orders.filter(o => o.status === 'pending').length}</div><div class="stat-card-label">Pending</div></div>
+      <div class="stat-card"><div class="stat-card-value" style="color:var(--secondary)">${Wishlist.count()}</div><div class="stat-card-label">Wishlist</div></div>
+    `;
+        const recent = orders.slice(-5).reverse();
+        document.getElementById('recentOrders').innerHTML = recent.length === 0 ?
+            '<div style="text-align:center;padding:30px"><p style="color:var(--text-secondary);margin-bottom:12px">No orders yet</p><a href="shop.html" class="btn btn-primary">Start Shopping</a></div>' :
+            recent.map(o => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border-glass)">
+          <div><div style="font-weight:700">${o.id}</div><div style="font-size:0.85rem;color:var(--text-muted)">${new Date(o.date).toLocaleDateString()}</div></div>
+          <div style="text-align:right"><span class="order-status ${o.status}">${o.status}</span><div style="font-weight:700;margin-top:4px;color:var(--primary-dark)">${formatPrice(o.total)}</div></div>
+        </div>`).join('');
+        function handleLogout() { localStorage.removeItem('sasta_current_user'); showToast('Logged out', 'info'); setTimeout(() => window.location.href = 'login.html', 1000); }
+    </script>
+</body>
+
+</html>

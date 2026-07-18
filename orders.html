@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - SastaElectronics</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+    <div id="pageHeader"></div>
+    <main style="padding-top:var(--header-height)">
+        <div class="page-header">
+            <h1>My Orders</h1>
+            <p>Track and manage your orders</p>
+        </div>
+        <div class="container section" style="padding-top:0" id="ordersContainer"></div>
+    </main>
+    <div id="pageFooter"></div>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        initPage('home');
+        const confirmed = getUrlParam('confirmed');
+        const container = document.getElementById('ordersContainer');
+        const orders = JSON.parse(localStorage.getItem('sasta_orders') || '[]').reverse();
+
+        if (orders.length === 0) {
+            container.innerHTML = `<div class="empty-state">
+        <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <h3>No orders yet</h3><p>Start shopping!</p>
+        <a href="shop.html" class="btn btn-primary">Start Shopping</a></div>`;
+        } else {
+            let html = '';
+            if (confirmed) {
+                html += `<div class="glass-card mb-4" style="border-color:rgba(15,157,88,0.3);text-align:center;padding:36px">
+          <div style="width:64px;height:64px;margin:0 auto 16px;background:rgba(15,157,88,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent)">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2 style="margin-bottom:8px;font-weight:800">Order Confirmed!</h2>
+          <p style="color:var(--text-secondary)">Your order <strong style="color:var(--primary-dark)">${confirmed}</strong> has been placed successfully.</p>
+        </div>`;
+            }
+            html += orders.map(order => {
+                const date = new Date(order.date);
+                const itemsList = order.items.map(item => {
+                    const p = getProductById(item.id); if (!p) return '';
+                    return `<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-glass)">
+            <img src="${p.image}" style="width:52px;height:52px;border-radius:8px;object-fit:cover">
+            <div style="flex:1"><div style="font-size:0.92rem;font-weight:600">${p.name}</div><div style="font-size:0.8rem;color:var(--text-muted)">Qty: ${item.qty}</div></div>
+            <div style="font-weight:700;font-size:0.92rem;color:var(--primary-dark)">${formatPrice(p.price * item.qty)}</div>
+          </div>`;
+                }).join('');
+                return `<div class="order-card">
+          <div class="order-card-header">
+            <div><div style="font-weight:700;margin-bottom:4px">Order #${order.id}</div><div style="color:var(--text-muted);font-size:0.85rem">${date.toLocaleDateString('en-PK', { year: 'numeric', month: 'long', day: 'numeric' })}</div></div>
+            <div style="text-align:right"><span class="order-status ${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span><div style="font-weight:700;margin-top:8px;color:var(--primary-dark)">${formatPrice(order.total)}</div></div>
+          </div>
+          ${itemsList}
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;flex-wrap:wrap;gap:8px">
+            <div style="font-size:0.85rem;color:var(--text-secondary)">Payment: ${order.payment === 'cod' ? 'Cash on Delivery' : order.payment === 'bank' ? 'Bank Transfer' : 'Card'}</div>
+            <div style="font-size:0.85rem;color:var(--text-secondary)">Ship to: ${order.shipping.address}, ${order.shipping.city}</div>
+          </div>
+        </div>`;
+            }).join('');
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>

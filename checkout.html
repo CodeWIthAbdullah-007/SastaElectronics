@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - SastaElectronics</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+  <div id="pageHeader"></div>
+  <main style="padding-top:var(--header-height)">
+    <div class="page-header">
+      <h1>Checkout</h1>
+      <p>Complete your order</p>
+    </div>
+    <div class="container section" style="padding-top:0">
+      <div class="checkout-steps">
+        <div class="checkout-step active"><span class="checkout-step-number">1</span><span>Shipping</span></div>
+        <div class="checkout-step-line"></div>
+        <div class="checkout-step"><span class="checkout-step-number">2</span><span>Payment</span></div>
+        <div class="checkout-step-line"></div>
+        <div class="checkout-step"><span class="checkout-step-number">3</span><span>Confirm</span></div>
+      </div>
+      <div id="checkoutContent"></div>
+      <div id="emailStatus"
+        style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid var(--primary);border-radius:12px;padding:12px 24px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9999;font-size:0.9rem;font-weight:600;max-width:90vw">
+      </div>
+    </div>
+  </main>
+  <div id="pageFooter"></div>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    initPage('shop');
+    const items = Cart.get();
+    const content = document.getElementById('checkoutContent');
+
+    if (items.length === 0) {
+      content.innerHTML = `<div class="empty-state">
+        <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+        <h3>Nothing to checkout</h3><p>Your cart is empty.</p>
+        <a href="shop.html" class="btn btn-primary">Shop Now</a>
+      </div>`;
+    } else {
+      const subtotal = Cart.total();
+      const shipping = subtotal >= 5000 ? 0 : 250;
+      const total = subtotal + shipping;
+
+      content.innerHTML = `
+        <div class="checkout-grid" style="display:grid;grid-template-columns:1fr 400px;gap:24px">
+          <div>
+            <div class="glass-card mb-3">
+              <h3 style="margin-bottom:20px;font-size:1.15rem;font-weight:700">Shipping Information</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="form-group"><label class="form-label">First Name *</label><input type="text" class="form-input" id="firstName" placeholder="First name" required></div>
+                <div class="form-group"><label class="form-label">Last Name *</label><input type="text" class="form-input" id="lastName" placeholder="Last name" required></div>
+              </div>
+              <div class="form-group"><label class="form-label">Email Address *</label><input type="email" class="form-input" id="email" placeholder="your@email.com" required></div>
+              <div class="form-group"><label class="form-label">Phone Number *</label><input type="tel" class="form-input" id="phone" placeholder="03XX XXXXXXX" required></div>
+              <div class="form-group"><label class="form-label">Street Address *</label><input type="text" class="form-input" id="address" placeholder="House no, Street, Area" required></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div class="form-group"><label class="form-label">City *</label>
+                  <select class="form-input form-select" id="city">
+                    <option value="">Select City</option>
+                    <option>Karachi</option><option>Lahore</option><option>Islamabad</option>
+                    <option>Rawalpindi</option><option>Faisalabad</option><option>Multan</option>
+                    <option>Peshawar</option><option>Quetta</option><option>Hyderabad</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Postal Code</label><input type="text" class="form-input" id="postalCode" placeholder="75000"></div>
+              </div>
+            </div>
+            <div class="glass-card">
+              <h3 style="margin-bottom:20px;font-size:1.15rem;font-weight:700">Payment Method</h3>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <label class="filter-option" style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1.5px solid var(--border-glass)">
+                  <input type="radio" name="payment" value="cod" checked> <span style="font-weight:600">Cash on Delivery (COD)</span>
+                </label>
+                <label class="filter-option" style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1.5px solid var(--border-glass)">
+                  <input type="radio" name="payment" value="bank"> <span style="font-weight:600">Bank Transfer</span>
+                </label>
+                <label class="filter-option" style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1.5px solid var(--border-glass)">
+                  <input type="radio" name="payment" value="card"> <span style="font-weight:600">Credit/Debit Card</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="cart-summary">
+            <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:16px">Order Summary</h3>
+            <div style="max-height:260px;overflow-y:auto;margin-bottom:16px">
+              ${items.map(item => {
+        const p = getProductById(item.id); if (!p) return '';
+        return `<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-glass)">
+                  <img src="${p.image}" style="width:52px;height:52px;border-radius:8px;object-fit:cover">
+                  <div style="flex:1"><div style="font-size:0.88rem;font-weight:600">${p.name}</div><div style="font-size:0.8rem;color:var(--text-muted)">Qty: ${item.qty}</div></div>
+                  <div style="font-weight:700;font-size:0.9rem;color:var(--primary-dark)">${formatPrice(p.price * item.qty)}</div>
+                </div>`;
+      }).join('')}
+            </div>
+            <div class="cart-summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+            <div class="cart-summary-row"><span>Shipping</span><span>${shipping === 0 ? '<span style="color:var(--accent);font-weight:600">Free</span>' : formatPrice(shipping)}</span></div>
+            <div class="cart-summary-row total"><span>Total</span><span style="color:var(--primary-dark)">${formatPrice(total)}</span></div>
+            <button class="btn btn-primary btn-lg w-full" style="margin-top:20px" id="placeOrderBtn" onclick="placeOrder()">Place Order</button>
+            <a href="cart.html" class="btn btn-secondary w-full" style="margin-top:8px;text-align:center">Back to Cart</a>
+          </div>
+        </div>`;
+    }
+
+    function showStatus(msg, color) {
+      const el = document.getElementById('emailStatus');
+      el.style.display = 'block';
+      el.style.borderColor = color || 'var(--primary)';
+      el.innerHTML = msg;
+      setTimeout(() => el.style.display = 'none', 6000);
+    }
+
+    function placeOrder() {
+      const fn = document.getElementById('firstName').value.trim();
+      const ln = document.getElementById('lastName').value.trim();
+      const em = document.getElementById('email').value.trim();
+      const ph = document.getElementById('phone').value.trim();
+      const ad = document.getElementById('address').value.trim();
+      const ct = document.getElementById('city').value;
+      if (!fn || !ln || !em || !ph || !ad || !ct) { showToast('Please fill in all required fields', 'error'); return; }
+
+      const btn = document.getElementById('placeOrderBtn');
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+
+      const orderId = 'SE' + Date.now().toString(36).toUpperCase();
+      const orderItems = Cart.get().map(item => {
+        const p = getProductById(item.id);
+        return p ? { name: p.name, qty: item.qty, price: p.price, total: p.price * item.qty } : null;
+      }).filter(Boolean);
+
+      const subtotal = Cart.total();
+      const shipping = subtotal >= 5000 ? 0 : 250;
+      const total = subtotal + shipping;
+      const payment = document.querySelector('input[name="payment"]:checked').value;
+      const paymentLabel = payment === 'cod' ? 'Cash on Delivery' : payment === 'bank' ? 'Bank Transfer' : 'Credit/Debit Card';
+
+      const order = {
+        id: orderId, items: Cart.get(), total, status: 'pending',
+        date: new Date().toISOString(),
+        shipping: { firstName: fn, lastName: ln, email: em, phone: ph, address: ad, city: ct },
+        payment, itemsList: orderItems, subtotal, shippingCost: shipping
+      };
+
+      const orders = JSON.parse(localStorage.getItem('sasta_orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('sasta_orders', JSON.stringify(orders));
+      Cart.clear();
+
+      const itemsText = orderItems.map(i => `${i.name} x${i.qty} = Rs. ${i.total.toLocaleString()}`).join('\n');
+
+      showStatus('📧 Sending order notification...', '#C8982E');
+
+      const emailBody = `
+NEW ORDER - SastaElectronics
+═══════════════════════════
+
+Order ID: ${orderId}
+Date: ${new Date().toLocaleString()}
+
+CUSTOMER DETAILS
+─────────────────
+Name: ${fn} ${ln}
+Email: ${em}
+Phone: ${ph}
+Address: ${ad}, ${ct}
+
+ITEMS ORDERED
+─────────────────
+${itemsText}
+
+PAYMENT SUMMARY
+─────────────────
+Subtotal: Rs. ${subtotal.toLocaleString()}
+Shipping: ${shipping === 0 ? 'Free' : 'Rs. ' + shipping.toLocaleString()}
+TOTAL: Rs. ${total.toLocaleString()}
+Payment: ${paymentLabel}
+      `.trim();
+
+      fetch('https://formsubmit.co/ajax/mabdullahanwar85@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          name: fn + ' ' + ln,
+          email: em,
+          phone: ph,
+          subject: `🛍️ New Order #${orderId} - SastaElectronics`,
+          message: emailBody,
+          order_id: orderId,
+          address: ad + ', ' + ct,
+          total: 'Rs. ' + total.toLocaleString(),
+          payment: paymentLabel,
+          _subject: `🛍️ New Order #${orderId} - SastaElectronics`,
+          _template: 'table'
+        })
+      }).then(res => res.json()).then(data => {
+        if (data.success) {
+          showStatus('✅ Order email sent to your Gmail!', '#0F9D58');
+          showToast('Order placed! Email notification sent', 'success');
+        } else {
+          showStatus('⚠️ Order saved, email may be delayed', '#DD9A1A');
+          showToast('Order placed successfully!', 'success');
+        }
+        setTimeout(() => window.location.href = 'orders.html?confirmed=' + orderId, 2000);
+      }).catch(err => {
+        showStatus('️ Order saved locally', '#DD9A1A');
+        console.log('Email error:', err);
+        setTimeout(() => window.location.href = 'orders.html?confirmed=' + orderId, 2000);
+      });
+    }
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1d4c168c9c32361',t:'MTc4NDQxMTk4Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
