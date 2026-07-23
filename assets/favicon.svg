@@ -1,13 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="favGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3B82F6"/>
-      <stop offset="50%" style="stop-color:#06B6D4"/>
-      <stop offset="100%" style="stop-color:#10B981"/>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8C547"/>
+      <stop offset="50%" style="stop-color:#D4A017"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="6" fill="#050816"/>
-  <path d="M6 22 L12 6 L18 18 L24 10 L26 22" stroke="url(#favGrad)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="18" cy="6" r="3" fill="#3B82F6"/>
-  <circle cx="26" cy="22" r="2" fill="#10B981"/>
+  
+  <!-- Dark navy rounded square background -->
+  <rect width="64" height="64" rx="14" fill="#1A1A2E"/>
+  
+  <!-- Shield -->
+  <path d="M32 10 L46 16 L46 30 C46 40 39 47 32 50 C25 47 18 40 18 30 L18 16 Z" 
+        fill="none" stroke="url(#favGold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Inner shield -->
+  <path d="M32 16 L42 20 L42 29 C42 37 37 42 32 44 C27 42 22 37 22 29 L22 20 Z" 
+        fill="none" stroke="url(#favGold)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+  
+  <!-- Lightning bolt -->
+  <path d="M33 16 L24 28 L30 28 L27 42 L38 26 L32 26 Z" 
+        fill="url(#favGold)" stroke="url(#favGold)" stroke-width="0.5" stroke-linejoin="round"/>
+  
+  <!-- Circuit dot -->
+  <circle cx="39" cy="21" r="2" fill="url(#favGold)"/>
+  <line x1="37" y1="21" x2="34" y2="23" stroke="url(#favGold)" stroke-width="1.5" stroke-linecap="round"/>
 </svg>

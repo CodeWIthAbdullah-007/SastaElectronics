@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Supabase</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #0f0; }
+    pre { background: #000; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    .success { color: #0f0; }
+    .error { color: #f00; }
+    .warning { color: #ff0; }
+  </style>
+</head>
+<body>
+  <h1>Supabase Debug Console</h1>
+  <pre id="output">Testing...</pre>
+
+  <script>
+    const output = document.getElementById('output');
+    let log = '';
+
+    function write(msg, type = '') {
+      log += `<div class="${type}">${msg}</div>`;
+      output.innerHTML = log;
+    }
+
+    async function test() {
+      write('=== SUPABASE CONNECTION TEST ===');
+      write('');
+
+      // Test 1: Check if supabase CDN loaded
+      if (typeof supabase === 'undefined') {
+        write('❌ FAIL: Supabase CDN not loaded', 'error');
+        write('   Add this to HTML: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+        return;
+      }
+      write('✅ PASS: Supabase CDN loaded');
+
+      // Test 2: Check credentials
+      write('');
+      write('=== CREDENTIALS ===');
+      if (typeof SUPABASE_URL === 'undefined' || !SUPABASE_URL) {
+        write('❌ FAIL: SUPABASE_URL not defined', 'error');
+      } else {
+        write(`✅ URL: ${SUPABASE_URL}`);
+      }
+
+      if (typeof SUPABASE_ANON_KEY === 'undefined' || !SUPABASE_ANON_KEY) {
+        write('❌ FAIL: SUPABASE_ANON_KEY not defined', 'error');
+      } else {
+        write(`✅ Key: ${SUPABASE_ANON_KEY.substring(0, 30)}...`);
+      }
+
+      // Test 3: Create client
+      write('');
+      write('=== CREATING CLIENT ===');
+      try {
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        write('✅ Client created successfully');
+
+        // Test 4: Try to connect
+        write('');
+        write('=== TESTING CONNECTION ===');
+        const { data, error } = await client.auth.getSession();
+        
+        if (error) {
+          write(`❌ Error: ${error.message}`, 'error');
+          write('');
+          write('Possible issues:', 'warning');
+          write('- Invalid URL or Key');
+          write('- Network error');
+          write('- Supabase project not active');
+        } else {
+          write('✅ Connection successful!', 'success');
+          write('');
+          write('=== SESSION INFO ===');
+          if (data.session) {
+            write(`User: ${data.session.user.email}`);
+          } else {
+            write('No active session (need to login)');
+          }
+        }
+
+        // Test 5: Try to query tables
+        write('');
+        write('=== TESTING TABLES ===');
+        const { data: profiles, error: profileError } = await client.from('profiles').select('*').limit(1);
+        
+        if (profileError) {
+          write(`️ Profiles table: ${profileError.message}`, 'warning');
+          write('');
+          write('Run this SQL in Supabase:', 'warning');
+          write('<pre style="background:#222;padding:10px;color:#fff;">create table profiles (id uuid references auth.users primary key, email text, first_name text, last_name text, phone text);</pre>');
+        } else {
+          write('✅ Profiles table accessible');
+        }
+
+      } catch (err) {
+        write(`❌ Fatal error: ${err.message}`, 'error');
+        write('');
+        write('Check browser console for details', 'warning');
+      }
+    }
+
+    test();
+  </script>
+</body>
+</html>

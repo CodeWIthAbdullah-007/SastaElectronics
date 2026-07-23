@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>CDN Test</title></head>
+<body>
+  <h1>Supabase CDN Test</h1>
+  <div id="result">Testing...</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const result = document.getElementById('result');
+    if (typeof supabase === 'undefined') {
+      result.innerHTML = '<span style="color:red">❌ CDN FAILED TO LOAD</span>';
+      console.error('Supabase CDN not loaded');
+    } else {
+      result.innerHTML = '<span style="color:green">✅ CDN LOADED SUCCESSFULLY</span>';
+      console.log('Supabase CDN loaded');
+      
+      // Test connection
+      const SUPABASE_URL = 'https://azvvxqstxjellvlplpurup.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_oONvwSfGNCiYVtXACT75TQ_p5qJTmsj';
+      const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
+      client.auth.getSession().then(({data, error}) => {
+        if (error) {
+          result.innerHTML += '<br><span style="color:orange">⚠️ Connection Error: ' + error.message + '</span>';
+        } else {
+          result.innerHTML += '<br><span style="color:green">✅ Connected to Supabase!</span>';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - SastaElectronics</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -19,10 +23,11 @@
             </div>
             <div class="flex-between mb-3 flex-wrap" style="gap:16px">
                 <div>
-                    <h1 style="font-size:1.8rem;font-weight:800" id="shopTitle">All Products</h1>
-                    <p style="color:var(--text-secondary);font-size:0.95rem" id="resultCount"></p>
+                    <h1 class="scroll-animate" style="font-size:1.8rem;font-weight:800" id="shopTitle">All Products</h1>
+                    <p class="scroll-animate delay-1" style="color:var(--text-secondary);font-size:0.95rem"
+                        id="resultCount"></p>
                 </div>
-                <select class="form-select" id="sortSelect" style="width:220px;background:#fff">
+                <select class="form-select scroll-animate" id="sortSelect" style="width:220px;background:#fff">
                     <option value="newest">Sort by: Newest</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
@@ -31,7 +36,7 @@
                 </select>
             </div>
             <div style="display:grid;grid-template-columns:280px 1fr;gap:24px" id="shopLayout">
-                <aside class="sidebar-filters" id="filtersPanel">
+                <aside class="sidebar-filters scroll-animate" id="filtersPanel">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
                         <h3 style="font-size:1.1rem;font-weight:700">Filters</h3>
                         <button class="btn btn-sm btn-secondary" onclick="clearFilters()">Clear All</button>
@@ -59,7 +64,7 @@
                     </div>
                 </aside>
                 <div>
-                    <div class="grid grid-3" id="productsGrid"></div>
+                    <div class="grid grid-3 stagger-children" id="productsGrid"></div>
                     <div id="emptyState" style="display:none" class="empty-state">
                         <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="36" height="36" fill="none"
                                 stroke="currentColor" stroke-width="2">
@@ -76,48 +81,36 @@
     </main>
     <div id="pageFooter"></div>
     <script src="js/data.js"></script>
+    <script src="js/header-sync.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/scroll-animations.js"></script>
     <script>
         initPage('shop');
         const urlCat = getUrlParam('category');
         const urlSearch = getUrlParam('search');
         let currentFilters = { category: urlCat || '', brand: [], minPrice: null, maxPrice: null, minRating: null, sort: 'newest', search: urlSearch || '' };
-
-        if (urlSearch) document.getElementById('shopTitle').textContent = `Results for "${urlSearch}"`;
+        if (urlSearch) document.getElementById('shopTitle').textContent = 'Results for "' + urlSearch + '"';
         else if (urlCat) document.getElementById('shopTitle').textContent = getCategoryName(urlCat);
-
-        document.getElementById('categoryFilters').innerHTML = getCategories().map(cat => `
-      <label class="filter-option"><input type="checkbox" value="${cat.id}" onchange="toggleCategoryFilter('${cat.id}')" ${urlCat === cat.id ? 'checked' : ''}> ${cat.name}</label>
-    `).join('');
-        document.getElementById('brandFilters').innerHTML = getBrands().map(b => `
-      <label class="filter-option"><input type="checkbox" value="${b}" onchange="toggleBrandFilter('${b}')"> ${b}</label>
-    `).join('');
-        document.getElementById('ratingFilters').innerHTML = [4, 3, 2, 1].map(r => `
-      <label class="filter-option"><input type="radio" name="rating" value="${r}" onchange="setRatingFilter(${r})"> ${r}+ Stars</label>
-    `).join('');
+        document.getElementById('categoryFilters').innerHTML = getCategories().map(cat => '<label class="filter-option"><input type="checkbox" value="' + cat.id + '" onchange="toggleCategoryFilter(\'' + cat.id + '\')" ' + (urlCat === cat.id ? 'checked' : '') + '> ' + cat.name + '</label>').join('');
+        document.getElementById('brandFilters').innerHTML = getBrands().map(b => '<label class="filter-option"><input type="checkbox" value="' + b + '" onchange="toggleBrandFilter(\'' + b + '\')"> ' + b + '</label>').join('');
+        document.getElementById('ratingFilters').innerHTML = [4, 3, 2, 1].map(r => '<label class="filter-option"><input type="radio" name="rating" value="' + r + '" onchange="setRatingFilter(' + r + ')"> ' + r + '+ Stars</label>').join('');
         document.getElementById('sortSelect').addEventListener('change', e => { currentFilters.sort = e.target.value; renderProducts(); });
-
         function toggleCategoryFilter(c) { currentFilters.category = currentFilters.category === c ? '' : c; renderProducts(); }
         function toggleBrandFilter(b) { const i = currentFilters.brand.indexOf(b); i >= 0 ? currentFilters.brand.splice(i, 1) : currentFilters.brand.push(b); renderProducts(); }
         function setRatingFilter(r) { currentFilters.minRating = r; renderProducts(); }
         function applyFilters() { currentFilters.minPrice = document.getElementById('minPrice').value ? Number(document.getElementById('minPrice').value) : null; currentFilters.maxPrice = document.getElementById('maxPrice').value ? Number(document.getElementById('maxPrice').value) : null; renderProducts(); }
-        function clearFilters() {
-            currentFilters = { category: '', brand: [], minPrice: null, maxPrice: null, minRating: null, sort: 'newest', search: '' };
-            document.querySelectorAll('#filtersPanel input').forEach(i => { i.checked = false; if (i.type === 'number') i.value = ''; });
-            document.getElementById('shopTitle').textContent = 'All Products';
-            renderProducts();
-        }
-
+        function clearFilters() { currentFilters = { category: '', brand: [], minPrice: null, maxPrice: null, minRating: null, sort: 'newest', search: '' }; document.querySelectorAll('#filtersPanel input').forEach(i => { i.checked = false; if (i.type === 'number') i.value = ''; }); document.getElementById('shopTitle').textContent = 'All Products'; renderProducts(); }
         function renderProducts() {
             const results = filterProducts(currentFilters);
             const grid = document.getElementById('productsGrid');
             const empty = document.getElementById('emptyState');
-            document.getElementById('resultCount').textContent = `${results.length} products found`;
+            document.getElementById('resultCount').textContent = results.length + ' products found';
             if (results.length === 0) { grid.style.display = 'none'; empty.style.display = 'block'; }
             else { grid.style.display = 'grid'; empty.style.display = 'none'; grid.innerHTML = results.map(renderProductCard).join(''); }
         }
         renderProducts();
     </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1e481da7e8f0ffc',t:'MTc4NDU3NzE1Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>

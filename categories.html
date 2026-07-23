@@ -6,35 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Categories - SastaElectronics</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="shortcut icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
   <div id="pageHeader"></div>
   <main style="padding-top:var(--header-height)">
     <div class="page-header">
-      <h1>All Categories</h1>
-      <p>Browse our wide range of electronics</p>
+      <h1 class="scroll-animate">All Categories</h1>
+      <p class="scroll-animate delay-1">Browse our wide range of electronics</p>
     </div>
     <div class="container section" style="padding-top:0">
-      <div class="grid grid-4" id="categoriesList"></div>
+      <div class="grid grid-4 stagger-children" id="categoriesList"></div>
     </div>
   </main>
   <div id="pageFooter"></div>
   <script src="js/data.js"></script>
+  <script src="js/header-sync.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/scroll-animations.js"></script>
   <script>
     initPage('categories');
-    document.getElementById('categoriesList').innerHTML = getCategories().map(cat => `
-      <a href="shop.html?category=${cat.id}" class="category-card" style="text-decoration:none">
-        <div class="category-card-icon">${getCategoryIcon(cat.icon)}</div>
-        <h3>${cat.name}</h3>
-        <p>${cat.count} Products</p>
-      </a>
-    `).join('');
+    document.getElementById('categoriesList').innerHTML = getCategories().map(cat => '<a href="shop.html?category=' + cat.id + '" class="category-card" style="text-decoration:none"><div class="category-card-icon">' + getCategoryIcon(cat.icon) + '</div><h3>' + cat.name + '</h3><p>' + cat.count + ' Products</p></a>').join('');
   </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1e480ebd9ea0ffc',t:'MTc4NDU3NzExOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SastaElectronics - Premium Electronics at Best Prices in Pakistan</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
@@ -22,16 +23,17 @@
             <div class="container">
                 <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center">
                     <div class="hero-content">
-                        <span class="badge badge-primary" style="margin-bottom:20px;font-size:0.82rem;padding:7px 18px">
-                            Pakistan's #1 Electronics Store</span>
-                        <h1>Premium Electronics at <span>Unbeatable Prices</span></h1>
-                        <p>Discover the latest in technology and home appliances. From smart TVs to air conditioners —
-                            genuine warranty and fast delivery across Pakistan.</p>
-                        <div class="hero-actions">
+                        <span class="badge badge-primary scroll-animate"
+                            style="margin-bottom:20px;font-size:0.82rem;padding:7px 18px"> Pakistan's #1 Electronics
+                            Store</span>
+                        <h1 class="scroll-animate delay-1">Premium Electronics at <span>Unbeatable Prices</span></h1>
+                        <p class="scroll-animate delay-2">Discover the latest in technology and home appliances. From
+                            smart TVs to air conditioners — genuine warranty and fast delivery across Pakistan.</p>
+                        <div class="hero-actions scroll-animate delay-3">
                             <a href="shop.html" class="btn btn-primary btn-lg">Shop Now →</a>
                             <a href="categories.html" class="btn btn-secondary btn-lg">Browse Categories</a>
                         </div>
-                        <div class="hero-stats">
+                        <div class="hero-stats scroll-animate delay-4">
                             <div class="hero-stat">
                                 <div class="hero-stat-number">500+</div>
                                 <div class="hero-stat-label">Products</div>
@@ -46,8 +48,8 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:center;justify-content:center">
-                        <div
+                    <div style="display:flex;align-items:center;justify-content:center" class="scroll-animate delay-2">
+                        <div class="animate-float"
                             style="width:100%;max-width:440px;aspect-ratio:1;background:linear-gradient(135deg,rgba(212,160,23,0.06),rgba(212,160,23,0.12));border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative">
                             <div
                                 style="width:75%;aspect-ratio:1;background:linear-gradient(135deg,rgba(212,160,23,0.1),rgba(212,160,23,0.18));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(212,160,23,0.15)">
@@ -58,13 +60,13 @@
                                     <circle cx="12" cy="20" r="2" />
                                 </svg>
                             </div>
-                            <div
+                            <div class="animate-float-slow"
                                 style="position:absolute;top:30px;right:20px;background:#fff;padding:10px 18px;border-radius:var(--radius-full);box-shadow:var(--shadow-lg);font-size:0.82rem;font-weight:700;color:var(--primary-dark);border:1px solid var(--border-light)">
                                 ✨ Free Delivery</div>
-                            <div
+                            <div class="animate-float"
                                 style="position:absolute;bottom:40px;left:10px;background:#fff;padding:10px 18px;border-radius:var(--radius-full);box-shadow:var(--shadow-lg);font-size:0.82rem;font-weight:700;color:var(--accent);border:1px solid var(--border-light)">
                                 ✓ Genuine Products</div>
-                            <div
+                            <div class="animate-float-slow"
                                 style="position:absolute;top:50%;right:-10px;background:#fff;padding:10px 18px;border-radius:var(--radius-full);box-shadow:var(--shadow-lg);font-size:0.82rem;font-weight:700;color:var(--warning);border:1px solid var(--border-light)">
                                 Best Prices</div>
                         </div>
@@ -75,9 +77,9 @@
 
         <section class="section" style="background:#fff">
             <div class="container">
-                <h2 class="section-title">Shop by Category</h2>
-                <p class="section-subtitle">Find exactly what you need from our wide range</p>
-                <div class="grid grid-4" id="categoriesGrid"></div>
+                <h2 class="section-title scroll-animate">Shop by Category</h2>
+                <p class="section-subtitle scroll-animate delay-1">Find exactly what you need from our wide range</p>
+                <div class="grid grid-4 stagger-children" id="categoriesGrid"></div>
             </div>
         </section>
 
@@ -85,8 +87,9 @@
             <div class="container">
                 <div class="flex-between mb-3 flex-wrap" style="gap:16px">
                     <div>
-                        <h2 class="section-title">Flash Deals</h2>
-                        <p class="section-subtitle" style="margin-bottom:0">Grab these deals before they expire</p>
+                        <h2 class="section-title scroll-animate">Flash Deals</h2>
+                        <p class="section-subtitle scroll-animate delay-1" style="margin-bottom:0">Grab these deals
+                            before they expire</p>
                     </div>
                     <div class="deal-timer" id="dealTimer">
                         <div class="deal-timer-unit"><span class="number" id="dealDays">00</span><span
@@ -99,23 +102,23 @@
                                 class="label">Secs</span></div>
                     </div>
                 </div>
-                <div class="grid grid-4" id="dealsGrid"></div>
+                <div class="grid grid-4 stagger-children" id="dealsGrid"></div>
             </div>
         </section>
 
         <section class="section" style="background:#fff">
             <div class="container">
-                <h2 class="section-title">Best Sellers</h2>
-                <p class="section-subtitle">Our most popular products loved by customers</p>
-                <div class="grid grid-4" id="bestSellersGrid"></div>
+                <h2 class="section-title scroll-animate">Best Sellers</h2>
+                <p class="section-subtitle scroll-animate delay-1">Our most popular products loved by customers</p>
+                <div class="grid grid-4 stagger-children" id="bestSellersGrid"></div>
             </div>
         </section>
 
         <section class="section" style="background:var(--bg-secondary)">
             <div class="container">
-                <h2 class="section-title">New Arrivals</h2>
-                <p class="section-subtitle">Check out the latest additions to our store</p>
-                <div class="grid grid-4" id="newArrivalsGrid"></div>
+                <h2 class="section-title scroll-animate">New Arrivals</h2>
+                <p class="section-subtitle scroll-animate delay-1">Check out the latest additions to our store</p>
+                <div class="grid grid-4 stagger-children" id="newArrivalsGrid"></div>
                 <div class="text-center mt-4">
                     <a href="shop.html" class="btn btn-secondary btn-lg">View All Products →</a>
                 </div>
@@ -124,15 +127,17 @@
 
         <section class="section" style="background:#fff">
             <div class="container">
-                <h2 class="section-title text-center">Why Choose SastaElectronics</h2>
-                <p class="section-subtitle text-center">We deliver trust, quality, and value</p>
-                <div class="grid grid-4" id="whyGrid"></div>
+                <h2 class="section-title text-center scroll-animate">Why Choose SastaElectronics</h2>
+                <p class="section-subtitle text-center scroll-animate delay-1">We deliver trust, quality, and value</p>
+                <div class="grid grid-4 stagger-children" id="whyGrid"></div>
             </div>
         </section>
     </main>
     <div id="pageFooter"></div>
     <script src="js/data.js"></script>
+    <script src="js/header-sync.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/scroll-animations.js"></script>
     <script>
         initPage('home');
         document.getElementById('categoriesGrid').innerHTML = getCategories().slice(0, 8).map(cat => `
@@ -171,7 +176,6 @@
         }
         updateTimer(); setInterval(updateTimer, 1000);
     </script>
-    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1d4dfb1caee2361',t:'MTc4NDQxMzIyNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>

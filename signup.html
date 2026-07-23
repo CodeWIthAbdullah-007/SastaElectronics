@@ -4,74 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - SastaElectronics</title>
+    <title>Sign Up - SastaElectronics</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
 </head>
 
 <body>
     <div id="pageHeader"></div>
+
     <main style="padding-top:var(--header-height)">
         <div class="container"
             style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--header-height) - 100px);padding:40px 24px">
-            <div class="glass-card" style="max-width:500px;width:100%;padding:40px">
-                <div style="text-align:center;margin-bottom:32px">
-                    <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:6px">Create Account</h1>
+            <div class="glass-card animate-fade-in-scale" style="max-width:500px;width:100%;padding:40px">
+                <div style="text-align:center;margin-bottom:32px" class="scroll-animate">
+                    <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:8px">Create Account</h1>
                     <p style="color:var(--text-secondary)">Join SastaElectronics for exclusive deals</p>
                 </div>
+
                 <form onsubmit="handleSignup(event)">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-                        <div class="form-group"><label class="form-label">First Name</label><input type="text"
-                                class="form-input" id="firstName" placeholder="First name" required></div>
-                        <div class="form-group"><label class="form-label">Last Name</label><input type="text"
-                                class="form-input" id="lastName" placeholder="Last name" required></div>
+                        <div class="form-group scroll-animate delay-1">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-input" id="firstName" placeholder="First name" required>
+                        </div>
+                        <div class="form-group scroll-animate delay-1">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-input" id="lastName" placeholder="Last name" required>
+                        </div>
                     </div>
-                    <div class="form-group"><label class="form-label">Email</label><input type="email"
-                            class="form-input" id="signupEmail" placeholder="your@email.com" required></div>
-                    <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input"
-                            id="signupPhone" placeholder="03XX XXXXXXX" required></div>
-                    <div class="form-group"><label class="form-label">Password</label><input type="password"
-                            class="form-input" id="signupPassword" placeholder="Min 6 characters" required
-                            minlength="6"></div>
-                    <div class="form-group"><label class="form-label">Confirm Password</label><input type="password"
-                            class="form-input" id="confirmPassword" placeholder="Re-enter password" required></div>
-                    <label class="filter-option" style="padding:0;border:none;margin-bottom:24px"><input type="checkbox"
-                            required> <span style="font-size:0.85rem">I agree to the <a href="terms.html">Terms</a> and
-                            <a href="privacy.html">Privacy Policy</a></span></label>
-                    <button type="submit" class="btn btn-primary btn-lg w-full">Create Account</button>
+
+                    <div class="form-group scroll-animate delay-2">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required>
+                    </div>
+
+                    <div class="form-group scroll-animate delay-2">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="signupPhone" placeholder="03XX XXXXXXX" required>
+                    </div>
+
+                    <div class="form-group scroll-animate delay-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="signupPassword" placeholder="Min 6 characters"
+                            required minlength="6">
+                    </div>
+
+                    <div class="form-group scroll-animate delay-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-input" id="confirmPassword" placeholder="Re-enter password"
+                            required>
+                    </div>
+
+                    <label class="filter-option scroll-animate delay-4"
+                        style="padding:0;border:none;margin-bottom:24px">
+                        <input type="checkbox" required>
+                        <span style="font-size:0.88rem">I agree to the <a href="terms.html">Terms</a> and <a
+                                href="privacy.html">Privacy Policy</a></span>
+                    </label>
+
+                    <div id="signupError"
+                        style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;color:var(--danger);font-size:0.9rem">
+                    </div>
+                    <div id="signupSuccess"
+                        style="display:none;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;color:var(--accent);font-size:0.9rem">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-full scroll-animate delay-5"
+                        id="signupBtn">Create Account</button>
                 </form>
-                <p style="text-align:center;margin-top:24px;color:var(--text-secondary)">Already have an account? <a
-                        href="login.html" style="font-weight:700">Sign In</a></p>
+
+                <p style="text-align:center;margin-top:24px;color:var(--text-secondary)" class="scroll-animate delay-5">
+                    Already have an account? <a href="login.html" style="font-weight:700">Sign In</a>
+                </p>
             </div>
         </div>
     </main>
+
     <div id="pageFooter"></div>
+
     <script src="js/data.js"></script>
+    <script src="js/header-sync.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/scroll-animations.js"></script>
+    <script src="js/signup.js"></script>
     <script>
         initPage('home');
-        function handleSignup(e) {
-            e.preventDefault();
-            const fn = document.getElementById('firstName').value.trim();
-            const ln = document.getElementById('lastName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
-            const phone = document.getElementById('signupPhone').value.trim();
-            const pass = document.getElementById('signupPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            if (pass !== confirm) { showToast('Passwords do not match', 'error'); return; }
-            if (pass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
-            const users = JSON.parse(localStorage.getItem('sasta_users') || '[]');
-            if (users.find(u => u.email === email)) { showToast('Email already registered', 'error'); return; }
-            const user = { id: 'U' + Date.now(), firstName: fn, lastName: ln, email, phone, password: pass, joined: new Date().toISOString() };
-            users.push(user);
-            localStorage.setItem('sasta_users', JSON.stringify(users));
-            localStorage.setItem('sasta_current_user', JSON.stringify(user));
-            showToast('Account created successfully!', 'success');
-            setTimeout(() => window.location.href = 'dashboard.html', 1000);
-        }
     </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1e90a9aaef90ffc',t:'MTc4NDYyNDcwMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>

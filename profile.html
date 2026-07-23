@@ -6,74 +6,294 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - SastaElectronics</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .avatar-upload {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+        }
+
+        .avatar-upload img,
+        .avatar-upload .avatar-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-secondary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .avatar-placeholder {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #fff;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .avatar-upload-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        .avatar-upload-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        #avatarInput {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
     <div id="pageHeader"></div>
     <main style="padding-top:var(--header-height)">
         <div class="page-header">
-            <h1>My Profile</h1>
-            <p>Manage your personal information</p>
+            <h1 class="scroll-animate">My Profile</h1>
+            <p class="scroll-animate delay-1">Manage your personal information</p>
         </div>
         <div class="container section" style="padding-top:0">
-            <div class="dashboard-grid">
-                <aside class="dashboard-sidebar">
-                    <nav class="dashboard-sidebar-nav">
-                        <a href="dashboard.html">${ICONS.grid} Dashboard</a>
-                        <a href="profile.html" class="active">${ICONS.user} My Profile</a>
-                        <a href="orders.html">${ICONS.package} My Orders</a>
-                        <a href="wishlist.html">${ICONS.heart} Wishlist</a>
-                        <a href="cart.html">${ICONS.cart} Cart</a>
-                    </nav>
-                </aside>
-                <div class="glass-card" id="profileContent"></div>
+            <div id="authCheck" style="text-align:center;padding:80px 20px">
+                <div class="loading-spinner"></div>
+                <p style="color:var(--text-secondary);margin-top:16px">Loading...</p>
+            </div>
+            <div id="profileContent" style="display:none">
+                <div class="dashboard-grid">
+                    <aside class="dashboard-sidebar scroll-animate">
+                        <nav class="dashboard-sidebar-nav">
+                            <a href="dashboard.html"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                </svg>Dashboard</a>
+                            <a href="profile.html" class="active"><svg viewBox="0 0 24 24" width="20" height="20"
+                                    fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>My Profile</a>
+                            <a href="orders.html"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                </svg>My Orders</a>
+                            <a href="wishlist.html"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                </svg>Wishlist</a>
+                            <a href="cart.html"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1" />
+                                    <circle cx="20" cy="21" r="1" />
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                </svg>Cart</a>
+                        </nav>
+                    </aside>
+                    <div>
+                        <div class="glass-card mb-3 scroll-animate" style="text-align:center">
+                            <h2 style="margin-bottom:4px;font-weight:800;font-size:1.4rem" id="profileFullName">User
+                            </h2>
+                            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px" id="profileEmail"><a
+                                    href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                    data-cfemail="84f1f7e1f6c4e1e9e5ede8aae7ebe9">[email&#160;protected]</a></p>
+                            <h3 style="margin-bottom:20px;font-weight:700;font-size:1rem;color:var(--text-secondary)">
+                                Profile Photo</h3>
+                            <div class="avatar-upload">
+                                <div id="avatarDisplay" class="avatar-placeholder">U</div>
+                                <label for="avatarInput" class="avatar-upload-btn" title="Change photo"><svg
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path
+                                            d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                        <circle cx="12" cy="13" r="4" />
+                                    </svg></label>
+                                <input type="file" id="avatarInput" accept="image/*"
+                                    onchange="handleAvatarUpload(event)">
+                            </div>
+                            <p style="color:var(--text-muted);font-size:0.85rem">Click the camera icon to upload a
+                                photo<br>JPG, PNG (Max 2MB)</p>
+                            <button class="btn btn-sm btn-secondary mt-2" id="removeAvatarBtn" style="display:none"
+                                onclick="removeAvatar()">Remove Photo</button>
+                        </div>
+                        <div class="glass-card scroll-animate delay-2">
+                            <h3 style="margin-bottom:24px;font-weight:700">Personal Information</h3>
+                            <form onsubmit="handleUpdateProfile(event)">
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                                    <div class="form-group"><label class="form-label">First Name *</label><input
+                                            type="text" class="form-input" id="pFirstName" required></div>
+                                    <div class="form-group"><label class="form-label">Last Name *</label><input
+                                            type="text" class="form-input" id="pLastName" required></div>
+                                </div>
+                                <div class="form-group"><label class="form-label">Email</label><input type="email"
+                                        class="form-input" id="pEmail" readonly
+                                        style="background:var(--bg-secondary);cursor:not-allowed"></div>
+                                <div class="form-group"><label class="form-label">Phone *</label><input type="tel"
+                                        class="form-input" id="pPhone" required></div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                                    <div class="form-group"><label class="form-label">City</label><input type="text"
+                                            class="form-input" id="pCity" placeholder="Your city"></div>
+                                    <div class="form-group"><label class="form-label">Address</label><input type="text"
+                                            class="form-input" id="pAddress" placeholder="Your address"></div>
+                                </div>
+                                <h3 style="margin:24px 0 16px;font-weight:700">Change Password</h3>
+                                <div class="form-group"><label class="form-label">New Password</label><input
+                                        type="password" class="form-input" id="pNewPass"
+                                        placeholder="Leave blank to keep current"></div>
+                                <div class="form-group"><label class="form-label">Confirm New Password</label><input
+                                        type="password" class="form-input" id="pConfirmPass"
+                                        placeholder="Confirm new password"></div>
+                                <div id="profileError"
+                                    style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;color:var(--danger);font-size:0.9rem">
+                                </div>
+                                <div id="profileSuccess"
+                                    style="display:none;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;color:var(--accent);font-size:0.9rem">
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+                            </form>
+                            <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border-glass)">
+                                <p style="color:var(--text-muted);font-size:0.85rem" id="accountCreated"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
     <div id="pageFooter"></div>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="js/supabase-config.js"></script>
     <script src="js/data.js"></script>
+    <script src="js/header-sync.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/scroll-animations.js"></script>
     <script>
         initPage('home');
-        const user = JSON.parse(localStorage.getItem('sasta_current_user') || 'null');
-        if (!user) { window.location.href = 'login.html'; }
-        document.getElementById('profileContent').innerHTML = `
-      <h3 style="margin-bottom:24px;font-weight:700">Personal Information</h3>
-      <form onsubmit="updateProfile(event)">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-input" id="pFirstName" value="${user.firstName}" required></div>
-          <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-input" id="pLastName" value="${user.lastName}" required></div>
-        </div>
-        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="pEmail" value="${user.email}" required></div>
-        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="pPhone" value="${user.phone}" required></div>
-        <h3 style="margin:24px 0 16px;font-weight:700">Change Password</h3>
-        <div class="form-group"><label class="form-label">Current Password</label><input type="password" class="form-input" id="pCurrentPass" placeholder="Enter current password"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div class="form-group"><label class="form-label">New Password</label><input type="password" class="form-input" id="pNewPass" placeholder="New password"></div>
-          <div class="form-group"><label class="form-label">Confirm</label><input type="password" class="form-input" id="pConfirmPass" placeholder="Confirm"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" style="margin-top:16px">Save Changes</button>
-      </form>
-      <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border-glass)">
-        <p style="color:var(--text-muted);font-size:0.85rem">Account created: ${new Date(user.joined).toLocaleDateString()}</p>
-      </div>`;
-        function updateProfile(e) {
+        let currentUser = null;
+        (async function () {
+            let user = null;
+            if (typeof supabaseClient !== 'undefined' && supabaseClient) { try { const { data } = await supabaseClient.auth.getSession(); if (data && data.session && data.session.user) user = data.session.user; } catch (e) { } }
+            if (!user) { const localUser = localStorage.getItem('sasta_current_user'); if (localUser) { try { user = JSON.parse(localUser); } catch (e) { } } }
+            if (!user) { window.location.href = 'login.html'; return; }
+            currentUser = user;
+            document.getElementById('authCheck').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+            const firstName = user.user_metadata?.first_name || user.firstName || '';
+            const lastName = user.user_metadata?.last_name || user.lastName || '';
+            const phone = user.user_metadata?.phone || user.phone || '';
+            const email = user.email || '';
+            const fullName = (firstName + ' ' + lastName).trim() || email.split('@')[0] || 'User';
+            document.getElementById('profileFullName').textContent = fullName;
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('pFirstName').value = firstName;
+            document.getElementById('pLastName').value = lastName;
+            document.getElementById('pEmail').value = email;
+            document.getElementById('pPhone').value = phone;
+            document.getElementById('pCity').value = user.user_metadata?.city || user.city || '';
+            document.getElementById('pAddress').value = user.user_metadata?.address || user.address || '';
+            if (user.created_at) { document.getElementById('accountCreated').textContent = 'Member since ' + new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); }
+            loadAvatar(user);
+        })();
+        function loadAvatar(user) {
+            const avatarDisplay = document.getElementById('avatarDisplay');
+            const removeBtn = document.getElementById('removeAvatarBtn');
+            const savedAvatar = localStorage.getItem('user_avatar_' + (user.id || user.email));
+            if (savedAvatar) { avatarDisplay.outerHTML = '<img id="avatarDisplay" src="' + savedAvatar + '" alt="Profile Photo">'; removeBtn.style.display = 'inline-flex'; }
+            else { const name = user.user_metadata?.first_name || user.firstName || user.email || 'U'; avatarDisplay.textContent = name.charAt(0).toUpperCase(); }
+        }
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0]; if (!file) return;
+            if (file.size > 2 * 1024 * 1024) { showToast('Image must be less than 2MB', 'error'); return; }
+            if (!file.type.startsWith('image/')) { showToast('Please select an image file', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const dataUrl = e.target.result;
+                localStorage.setItem('user_avatar_' + (currentUser.id || currentUser.email), dataUrl);
+                const avatarDisplay = document.getElementById('avatarDisplay');
+                if (avatarDisplay.tagName === 'DIV') { avatarDisplay.outerHTML = '<img id="avatarDisplay" src="' + dataUrl + '" alt="Profile Photo">'; } else { avatarDisplay.src = dataUrl; }
+                document.getElementById('removeAvatarBtn').style.display = 'inline-flex';
+                showToast('Photo updated!', 'success');
+                setTimeout(() => location.reload(), 500);
+            };
+            reader.readAsDataURL(file);
+        }
+        function removeAvatar() {
+            localStorage.removeItem('user_avatar_' + (currentUser.id || currentUser.email));
+            const avatarDisplay = document.getElementById('avatarDisplay');
+            const name = currentUser.user_metadata?.first_name || currentUser.firstName || currentUser.email || 'U';
+            avatarDisplay.outerHTML = '<div id="avatarDisplay" class="avatar-placeholder">' + name.charAt(0).toUpperCase() + '</div>';
+            document.getElementById('removeAvatarBtn').style.display = 'none';
+            document.getElementById('avatarInput').value = '';
+            showToast('Photo removed', 'info');
+            setTimeout(() => location.reload(), 500);
+        }
+        async function handleUpdateProfile(e) {
             e.preventDefault();
-            user.firstName = document.getElementById('pFirstName').value.trim();
-            user.lastName = document.getElementById('pLastName').value.trim();
-            user.email = document.getElementById('pEmail').value.trim();
-            user.phone = document.getElementById('pPhone').value.trim();
-            const np = document.getElementById('pNewPass').value;
-            const cp = document.getElementById('pConfirmPass').value;
-            if (np) { if (np.length < 6) { showToast('Min 6 characters', 'error'); return; } if (np !== cp) { showToast('Passwords do not match', 'error'); return; } user.password = np; }
-            localStorage.setItem('sasta_current_user', JSON.stringify(user));
-            const users = JSON.parse(localStorage.getItem('sasta_users') || '[]');
-            const idx = users.findIndex(u => u.id === user.id);
-            if (idx >= 0) { users[idx] = user; localStorage.setItem('sasta_users', JSON.stringify(users)); }
-            showToast('Profile updated!', 'success');
+            const errorDiv = document.getElementById('profileError');
+            const successDiv = document.getElementById('profileSuccess');
+            const btn = document.getElementById('saveProfileBtn');
+            errorDiv.style.display = 'none'; successDiv.style.display = 'none';
+            const firstName = document.getElementById('pFirstName').value.trim();
+            const lastName = document.getElementById('pLastName').value.trim();
+            const phone = document.getElementById('pPhone').value.trim();
+            const city = document.getElementById('pCity').value.trim();
+            const address = document.getElementById('pAddress').value.trim();
+            const newPass = document.getElementById('pNewPass').value;
+            const confirmPass = document.getElementById('pConfirmPass').value;
+            if (!firstName || !lastName || !phone) { errorDiv.textContent = 'Please fill in all required fields'; errorDiv.style.display = 'block'; return; }
+            if (newPass && newPass !== confirmPass) { errorDiv.textContent = 'Passwords do not match'; errorDiv.style.display = 'block'; return; }
+            if (newPass && newPass.length < 6) { errorDiv.textContent = 'Password must be at least 6 characters'; errorDiv.style.display = 'block'; return; }
+            btn.disabled = true; btn.textContent = 'Saving...';
+            try {
+                if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+                    const { error: authError } = await supabaseClient.auth.updateUser({ data: { first_name: firstName, last_name: lastName, phone: phone, city: city, address: address } });
+                    if (authError) throw authError;
+                    if (newPass) { const { error: passError } = await supabaseClient.auth.updateUser({ password: newPass }); if (passError) throw passError; }
+                    await supabaseClient.from('profiles').upsert({ id: currentUser.id, email: currentUser.email, first_name: firstName, last_name: lastName, phone: phone, city: city, address: address });
+                }
+                const updatedUser = { ...currentUser, firstName, lastName, phone, city, address, user_metadata: { ...(currentUser.user_metadata || {}), first_name: firstName, last_name: lastName, phone, city, address } };
+                localStorage.setItem('sasta_current_user', JSON.stringify(updatedUser));
+                currentUser = updatedUser;
+                localStorage.setItem('header_userName', firstName || currentUser.email?.split('@')[0] || 'User');
+                localStorage.setItem('header_hasAvatar', localStorage.getItem('user_avatar_' + (currentUser.id || currentUser.email)) ? 'true' : 'false');
+                successDiv.textContent = 'Profile updated successfully!'; successDiv.style.display = 'block';
+                showToast('Profile updated!', 'success');
+                btn.textContent = 'Save Changes'; btn.disabled = false;
+                document.getElementById('pNewPass').value = ''; document.getElementById('pConfirmPass').value = '';
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) { errorDiv.textContent = err.message || 'Failed to update profile'; errorDiv.style.display = 'block'; btn.textContent = 'Save Changes'; btn.disabled = false; }
         }
     </script>
 </body>
