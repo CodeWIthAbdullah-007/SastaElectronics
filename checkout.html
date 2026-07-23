@@ -93,7 +93,36 @@
       Cart.clear();
       const itemsText = orderItems.map(i => i.name + ' x' + i.qty + ' = Rs. ' + i.total.toLocaleString()).join('\n');
       const emailData = { to_email: STORE_OWNER_EMAIL, from_name: fn + ' ' + ln, from_email: em, phone: ph, order_id: orderId, items: itemsText, address: ad + ', ' + ct, payment: paymentLabel, subtotal: 'Rs. ' + subtotal.toLocaleString(), shipping_cost: shipping === 0 ? 'Free' : 'Rs. ' + shipping.toLocaleString(), total: 'Rs. ' + total.toLocaleString(), message: 'NEW ORDER #' + orderId + '\n\nCustomer: ' + fn + ' ' + ln + '\nEmail: ' + em + '\nPhone: ' + ph + '\nAddress: ' + ad + ', ' + ct + '\n\nItems:\n' + itemsText + '\n\nSubtotal: Rs. ' + subtotal.toLocaleString() + '\nShipping: ' + (shipping === 0 ? 'Free' : 'Rs. ' + shipping.toLocaleString()) + '\nTotal: Rs. ' + total.toLocaleString() + '\nPayment: ' + paymentLabel + '\n\n---\nMANAGE THIS ORDER:\nConfirm: ' + ADMIN_URL + '?action=confirm&order=' + orderId + '\nCancel: ' + ADMIN_URL + '?action=cancel&order=' + orderId };
-      showStatus('📧 Sending order notification...', '#C8982E');
+
+      emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        emailData,
+        EMAILJS_PUBLIC_KEY
+      )
+        .then(function (response) {
+
+          console.log("SUCCESS!", response);
+
+          showStatus('✅ Order email sent!', '#0F9D58');
+          showToast('Order placed successfully!', 'success');
+
+          setTimeout(() => {
+            window.location.href = 'orders.html?confirmed=' + orderId;
+          }, 2000);
+
+        })
+        .catch(function (error) {
+
+          console.error("EMAILJS ERROR:", error);
+
+          showStatus('❌ Email sending failed!', '#E53935');
+          showToast('Email sending failed!', 'error');
+
+          btn.disabled = false;
+          btn.textContent = 'Place Order';
+
+        });
       fetch('https://formsubmit.co/ajax/' + STORE_OWNER_EMAIL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ name: fn + ' ' + ln, email: em, phone: ph, subject: '🛍️ New Order #' + orderId + ' - SastaElectronics', message: emailData.message, order_id: orderId, address: ad + ', ' + ct, total: 'Rs. ' + total.toLocaleString(), payment: paymentLabel, _subject: '🛍️ New Order #' + orderId + ' - SastaElectronics', _template: 'table' }) }).then(res => res.json()).then(data => { if (data.success) { showStatus('✅ Order email sent!', '#0F9D58'); showToast('Order placed! Email sent', 'success'); } else { showStatus('⚠️ Order saved, email may be delayed', '#DD9A1A'); showToast('Order placed successfully!', 'success'); } setTimeout(() => window.location.href = 'orders.html?confirmed=' + orderId, 2000); }).catch(err => { showStatus('️ Order saved locally', '#DD9A1A'); console.log('Email error:', err); setTimeout(() => window.location.href = 'orders.html?confirmed=' + orderId, 2000); });
     }
   </script>
