@@ -181,11 +181,20 @@ function renderHeader(activePage) {
         <a href="wishlist.html" class="header-action-btn" title="Wishlist">${ICONS.heart}<span class="action-badge wishlist-badge" style="display:none">0</span></a>
         <a href="cart.html" class="header-action-btn" title="Cart">${ICONS.cart}<span class="action-badge cart-badge" style="display:none">0</span></a>
         ${userAvatarHtml}
-        <div class="mobile-toggle" onclick="document.getElementById('mobileNav').classList.toggle('open')"><span></span><span></span><span></span></div>
+        <div class="mobile-toggle" id="mobileToggle" onclick="toggleMobileMenu()"><span></span><span></span><span></span></div>
       </div>
     </div>
   </header>
   <div class="mobile-nav" id="mobileNav">${navHtml}<a href="wishlist.html">Wishlist</a><a href="cart.html">Cart</a><a href="${isLoggedIn ? 'profile.html' : 'login.html'}">${isLoggedIn ? 'My Profile' : 'My Account'}</a></div>`;
+}
+
+function toggleMobileMenu() {
+  const nav = document.getElementById('mobileNav');
+  const toggle = document.getElementById('mobileToggle');
+  if (nav && toggle) {
+    nav.classList.toggle('open');
+    toggle.classList.toggle('active');
+  }
 }
 
 function renderFooter() {
@@ -217,7 +226,7 @@ function renderFooter() {
           <h4 class="footer-title">Contact Info</h4>
           <div class="footer-links">
             <a href="tel:+923001234567">${ICONS.phone} +92 300 1234567</a>
-            <a href="mailto:info@sastaelectronics.pk">${ICONS.mail} info@sastaelectronics.pk</a>
+            <a href="mailto:mabdullahanwar85@gmail.com">${ICONS.mail} mabdullahanwar85@gmail.com</a>
             <a href="#">${ICONS.mapPin} Karachi, Pakistan</a>
             <a href="#">${ICONS.clock} Mon-Sat: 10AM - 10PM</a>
           </div>
